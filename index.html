@@ -71,6 +71,8 @@
         .btn-primary:hover { filter: brightness(1.15); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(15, 44, 89, 0.3); }
         .btn-accent { background: var(--brand-accent); color: #fff; box-shadow: 0 4px 10px rgba(139, 28, 49, 0.2); }
         .btn-accent:hover { filter: brightness(1.15); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(139, 28, 49, 0.3); }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-danger:hover { filter: brightness(1.15); transform: translateY(-2px); }
         .btn-outline { background: transparent; border: 1.5px solid var(--border-light); color: var(--text-main); }
         .btn-outline:hover { background: var(--hover-bg); border-color: var(--brand-primary); color: var(--brand-primary); }
         .btn-text { background: none; border: none; color: var(--brand-primary); font-weight: 700; cursor: pointer; text-decoration: none; font-family: var(--font-body); padding: 0; border-bottom: 2px solid transparent; transition: border-color 0.2s;}
@@ -106,78 +108,87 @@
         
         .app-title { font-size: 2em; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
         .app-subtitle { font-family: var(--font-heading); font-style: italic; color: var(--text-muted); margin-bottom: 35px; }
+        
+        /* Developer Branding explicitly lowercase */
+        .brand-footer { margin-top: 35px; font-size: 0.8em; color: var(--text-muted); font-weight:600; text-align: center; letter-spacing: 2px; text-transform: none; }
 
         /* Dashboard Layout */
-        #app-layout { display: flex; min-height: 100vh; }
+        #app-layout { display: flex; flex-direction: column; min-height: 100vh; }
         
-        /* Sidebar */
-        .sidebar {
-            width: 280px; background: var(--bg-sidebar); color: var(--text-inverse);
-            display: flex; flex-direction: column; padding: 35px 0; flex-shrink: 0;
-            transition: width 0.3s ease; z-index: 100;
+        .top-header {
+            background: var(--brand-primary); padding: 15px 20px; display: flex;
+            align-items: center; gap: 10px; position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .sidebar-header { padding: 0 25px 30px 25px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .sidebar-header h2 { color: white; font-size: 1.5em; letter-spacing: 1.5px; transition: opacity 0.3s; }
-        .sidebar-header svg { width: 32px; height: 32px; stroke: white; flex-shrink: 0; }
-        
-        .nav-menu { display: flex; flex-direction: column; gap: 8px; padding: 0 20px; flex-grow: 1; }
-        .nav-item {
-            padding: 14px 20px; color: rgba(255,255,255,0.7); cursor: pointer;
-            border-radius: var(--radius-md); font-weight: 500; transition: all 0.2s;
-            display: flex; align-items: center; gap: 16px; overflow: hidden; white-space: nowrap;
-        }
-        .nav-item svg { flex-shrink: 0; }
-        .nav-item:hover { background: rgba(255,255,255,0.08); color: white; }
-        .nav-item.active { background: var(--brand-accent); color: white; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .nav-text { transition: opacity 0.3s; }
-        
-        .sidebar-footer { padding: 25px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 12px; }
+        .top-header h2 { color: #ffffff; margin: 0; font-size: 1.2em; letter-spacing: 1px; font-family: var(--font-body); text-transform: uppercase; font-weight: 700;}
+        .top-header svg { width: 24px; height: 24px; }
+        .top-header svg path { stroke: #ffffff; }
+        .top-header svg polygon { fill: var(--brand-accent); }
 
         /* Main Content */
-        .main-content { flex-grow: 1; padding: 45px; overflow-y: auto; background: var(--bg-body); position: relative; }
-        .view-section { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .main-content { flex-grow: 1; padding: 25px 20px 90px 20px; max-width: 900px; margin: 0 auto; width: 100%; position: relative; display: flex; flex-direction: column;}
+        .view-section { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); flex-grow: 1;}
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Profile Header */
+        /* Intuitively Scaled Profile Header */
         .profile-header {
-            background: var(--bg-surface); border-radius: var(--radius-lg); padding: 35px;
-            display: flex; align-items: center; gap: 35px; box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-light); margin-bottom: 35px; flex-wrap: wrap;
+            background: var(--bg-surface); border-radius: var(--radius-lg); padding: 25px;
+            display: flex; align-items: center; gap: 20px; box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light); margin-bottom: 25px; flex-wrap: wrap;
         }
-        .avatar-wrapper { position: relative; width: 110px; height: 110px; border-radius: 12px; overflow: hidden; border: 3px solid var(--bg-body); background: var(--border-light); flex-shrink: 0; box-shadow: var(--shadow-sm);}
+        .avatar-wrapper { position: relative; width: 80px; height: 80px; border-radius: 10px; overflow: hidden; border: 2px solid var(--bg-body); background: var(--border-light); flex-shrink: 0; box-shadow: var(--shadow-sm);}
         .avatar-wrapper img { width: 100%; height: 100%; object-fit: cover; }
         .avatar-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-        .profile-text h2 { font-size: 2em; margin-bottom: 6px; }
-        .profile-text p { font-size: 0.9em; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; line-height: 1.8;}
-        .gwa-highlight { margin-left: auto; text-align: right; border-left: 2px solid var(--border-light); padding-left: 35px; }
-        .gwa-highlight label { font-size: 0.85em; color: var(--text-muted); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
-        .gwa-highlight .val { font-family: var(--font-heading); font-size: 3.5em; color: var(--brand-primary); line-height: 1; margin-top: 5px;}
+        .profile-text h2 { font-size: 1.4em; margin-bottom: 4px; }
+        .profile-text p { font-size: 0.8em; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; line-height: 1.6;}
+        .gwa-highlight { margin-left: auto; text-align: right; border-left: 2px solid var(--border-light); padding-left: 20px; }
+        .gwa-highlight label { font-size: 0.75em; color: var(--text-muted); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+        .gwa-highlight .val { font-family: var(--font-heading); font-size: 2.2em; color: var(--brand-primary); line-height: 1; margin-top: 5px;}
 
         /* Accordions */
-        .ledger-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;}
+        .ledger-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;}
         
         details.academic-year, details.academic-term {
             background: var(--bg-surface); border: 1px solid var(--border-light);
-            border-radius: var(--radius-md); margin-bottom: 16px; box-shadow: var(--shadow-sm);
+            border-radius: var(--radius-md); margin-bottom: 12px; box-shadow: var(--shadow-sm);
         }
         details > summary {
-            padding: 20px 25px; font-weight: bold; cursor: pointer; display: flex; 
+            padding: 16px 20px; font-weight: bold; cursor: pointer; display: flex; 
             justify-content: space-between; align-items: center; list-style: none;
             background: var(--bg-surface); border-radius: var(--radius-md); transition: background 0.2s;
         }
-        details.academic-year > summary { font-family: var(--font-heading); font-size: 1.25em; color: var(--brand-primary); }
+        details.academic-year > summary { font-family: var(--font-heading); font-size: 1.1em; color: var(--brand-primary); }
         details > summary::-webkit-details-marker { display: none; }
         details > summary:hover { background: var(--hover-bg); }
-        .year-content, .term-content { padding: 20px 25px; border-top: 1px solid var(--border-light); overflow-x: auto; }
+        .year-content, .term-content { padding: 15px 20px; border-top: 1px solid var(--border-light); overflow-x: auto; }
 
         /* Tables */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.95em; min-width: 650px; }
-        th { text-align: left; padding: 14px; border-bottom: 2px solid var(--brand-primary); color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-size: 0.8em; font-weight: 700; }
-        td { padding: 14px; border-bottom: 1px solid var(--border-light); }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9em; min-width: 600px; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid var(--brand-primary); color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-size: 0.75em; font-weight: 700; }
+        td { padding: 12px; border-bottom: 1px solid var(--border-light); word-break: break-word; }
         tr:last-child td { border-bottom: none; }
-        .course-code { font-family: monospace; font-weight: 700; color: var(--brand-accent); font-size: 1.15em; }
-        .grade-pill { background: var(--bg-body); border: 1px solid var(--border-light); padding: 5px 10px; border-radius: var(--radius-md); font-weight: 700; display: inline-block;}
+        .course-code { font-family: monospace; font-weight: 700; color: var(--brand-accent); font-size: 1.1em; }
+        .grade-pill { background: var(--bg-body); border: 1px solid var(--border-light); padding: 4px 8px; border-radius: var(--radius-md); font-weight: 700; display: inline-block; font-size: 0.9em;}
         .status-irregular { color: var(--danger); font-weight: bold; }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--bg-surface); display: flex; justify-content: space-around;
+            padding: 10px 0; padding-bottom: calc(10px + env(safe-area-inset-bottom));
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.05); border-top: 1px solid var(--border-light);
+            z-index: 1000;
+        }
+        .nav-item {
+            background: none; border: none; display: flex; flex-direction: column;
+            align-items: center; gap: 4px; color: var(--text-muted);
+            font-family: var(--font-body); font-size: 0.75em; font-weight: 600;
+            cursor: pointer; flex: 1; transition: color 0.2s;
+        }
+        .nav-item svg { width: 24px; height: 24px; stroke: currentColor; transition: transform 0.2s; }
+        .nav-item:hover { color: var(--brand-primary); }
+        .nav-item.active { color: var(--brand-accent); }
+        .nav-item.active svg { transform: scale(1.1); }
 
         /* Custom Modals */
         .custom-dialog-overlay {
@@ -197,17 +208,34 @@
         .dialog-title { font-family: var(--font-heading); margin-bottom: 10px; font-size: 1.4em; color: var(--brand-primary); }
         .dialog-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px; }
 
-        /* Responsive */
+        /* AGGRESSIVE MOBILE SCALING FOR ANTI-SCROLL */
         @media (max-width: 768px) {
-            .sidebar { width: 80px; align-items: center; padding: 25px 0; }
-            .sidebar-header h2, .nav-text { display: none; }
-            .sidebar-header { padding: 0 0 25px 0; }
-            .nav-item { padding: 14px; justify-content: center; }
-            .sidebar-footer .btn span { display: none; }
-            .sidebar-footer .btn { padding: 14px; }
-            .main-content { padding: 25px 15px; }
-            .profile-header { flex-direction: column; text-align: center; }
-            .gwa-highlight { margin-left: 0; text-align: center; border-left: none; border-top: 1px solid var(--border-light); padding-left: 0; padding-top: 20px; width: 100%; }
+            .main-content { padding: 15px 10px 85px 10px; }
+            .profile-header { padding: 15px; gap: 15px; flex-direction: column; text-align: center; }
+            .avatar-wrapper { width: 70px; height: 70px; }
+            .profile-text h2 { font-size: 1.2em; }
+            .profile-text p { font-size: 0.7em; line-height: 1.4; }
+            .gwa-highlight { margin-left: 0; padding-left: 0; border-left: none; border-top: 1px solid var(--border-light); padding-top: 12px; width: 100%; text-align: center; }
+            .gwa-highlight label { font-size: 0.7em; }
+            .gwa-highlight .val { font-size: 1.8em; }
+            
+            .institutional-card { padding: 20px; }
+            
+            .ledger-toolbar { flex-direction: column; align-items: stretch; gap: 10px; }
+            .ledger-toolbar h3 { font-size: 1.1em; text-align: center; margin-bottom: 5px; }
+            .ledger-toolbar .btn { width: 100%; }
+            .ledger-toolbar .input-group { min-width: 100%; }
+            
+            details.academic-year > summary { padding: 12px 15px; font-size: 0.95em; flex-wrap: wrap; gap: 8px; }
+            details.academic-year > summary > div { width: 100%; justify-content: space-between; }
+            
+            .year-content, .term-content { padding: 10px; }
+            
+            /* Table Crunches */
+            table { font-size: 0.85em; min-width: 100%; }
+            th, td { padding: 8px 4px; font-size: 0.8em; }
+            .course-code { font-size: 0.9em; }
+            .grade-pill { padding: 3px 6px; font-size: 0.85em; }
         }
     </style>
 </head>
@@ -273,44 +301,22 @@
                 <p class="text-center" style="font-size: 0.9em; color: var(--text-muted);">Existing record? <button class="btn-text" onclick="KeptorAuth.switchView('login')">Return to Authentication</button></p>
             </div>
         </div>
-        <p style="margin-top: 35px; font-size: 0.8em; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; font-weight:600;">powered by brenduling</p>
+        <p class="brand-footer">powered by brenduling</p>
     </div>
 
     <div id="app-layout" class="hidden">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <svg viewBox="0 0 100 100" fill="none">
-                    <polygon points="50,10 90,30 50,50 10,30" fill="var(--brand-accent)"/>
-                    <path d="M10 30 L10 70 L50 90 L90 70 L90 30 M50 50 L50 90" stroke-width="6" stroke-linejoin="round"/>
-                </svg>
-                <h2>Keptor</h2>
-            </div>
-            <nav class="nav-menu">
-                <div class="nav-item active" onclick="KeptorUI.switchNav('dashboard', this)" title="Scholastic Overview">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                    <span class="nav-text">Scholastic Overview</span>
-                </div>
-                <div class="nav-item" onclick="KeptorUI.switchNav('ledger', this)" title="Academic Ledger">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                    <span class="nav-text">Academic Ledger</span>
-                </div>
-            </nav>
-            <div class="sidebar-footer">
-                <button class="btn btn-outline" style="color:var(--text-inverse); border-color: rgba(255,255,255,0.2);" onclick="KeptorUI.toggleTheme()" title="Toggle Theme">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                    <span class="nav-text">Toggle Theme</span>
-                </button>
-                <button class="btn btn-outline" style="color:var(--text-inverse); border-color: rgba(255,255,255,0.2);" onclick="KeptorAuth.logout()" title="Sign Out">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                    <span class="nav-text">Sign Out</span>
-                </button>
-            </div>
-        </aside>
+        
+        <header class="top-header">
+            <svg viewBox="0 0 100 100" fill="none">
+                <polygon points="50,10 90,30 50,50 10,30" />
+                <path d="M10 30 L10 70 L50 90 L90 70 L90 30 M50 50 L50 90" stroke-width="6" stroke-linejoin="round"/>
+            </svg>
+            <h2>Keptor</h2>
+        </header>
 
         <main class="main-content">
             
             <section id="nav-dashboard" class="view-section">
-                <h3 style="margin-bottom: 25px; font-size: 1.6em;">Institutional Profile</h3>
                 
                 <div class="profile-header">
                     <div class="avatar-wrapper">
@@ -320,7 +326,9 @@
                     <div class="profile-text">
                         <h2 id="display-name">Student Name</h2>
                         <p id="display-info">ID | Program</p>
-                        <p id="display-meta" style="color:var(--brand-primary); margin-top:4px;">Admission: 2024 | Status: <span id="display-status">Regular</span></p>
+                        <p style="color:var(--brand-primary); margin-top:4px; font-size: 0.8em; font-weight: 600;">
+                            Admission: <span id="display-admission"></span> | Status: <span id="display-status">Regular</span>
+                        </p>
                     </div>
                     <div class="gwa-highlight">
                         <label>Cumulative GWA</label>
@@ -328,16 +336,16 @@
                     </div>
                 </div>
 
-                <div class="institutional-card" style="max-width: 100%; padding:35px;">
+                <div class="institutional-card" style="max-width: 100%; padding: 25px;">
                     <div class="ledger-toolbar">
-                        <h3>Comprehensive Record Summary</h3>
-                        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-                            <div class="input-group" style="margin:0; min-width:200px;">
+                        <h3 style="font-size: 1.2em;">Comprehensive Record</h3>
+                        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; width: 100%;">
+                            <div class="input-group" style="margin:0; flex: 1; min-width: 150px;">
                                 <input type="text" id="summary-search" placeholder="Search course code or title..." onkeyup="KeptorApp.renderSummary()">
                             </div>
                             <div class="input-group" style="margin:0; min-width:180px;">
                                 <select id="summary-sort" onchange="KeptorApp.renderSummary()">
-                                    <option value="default">Chronological (Default)</option>
+                                    <option value="default">Chronological</option>
                                     <option value="title-asc">Course Title (A-Z)</option>
                                     <option value="code-asc">Course Code (A-Z)</option>
                                     <option value="grade-high">Grade (Highest: 1.0)</option>
@@ -346,8 +354,8 @@
                             </div>
                         </div>
                     </div>
-                    <p style="color: var(--text-muted); margin-bottom: 25px; font-size:0.9em;">A consolidated, read-only view of all transcribed courses. (1.0 = Highest, 5.0 = Lowest. Grades of INC, NC, or 5.0 trigger an Irregular status and are excluded from GWA).</p>
-                    <div style="overflow-x:auto; border: 1.5px solid var(--border-light); border-radius: var(--radius-md);">
+                    <p style="color: var(--text-muted); margin-bottom: 15px; font-size:0.85em;">(1.0 = Highest, 5.0 = Lowest. Grades of INC, NC, or 5.0 trigger an Irregular status and are excluded from GWA).</p>
+                    <div style="overflow-x:auto; border: 1px solid var(--border-light); border-radius: var(--radius-md);">
                         <table style="margin-top:0;">
                             <thead style="background:var(--hover-bg);">
                                 <tr><th>Code</th><th>Course Title</th><th>Term</th><th>Units</th><th>Grade</th></tr>
@@ -361,16 +369,36 @@
 
             <section id="nav-ledger" class="view-section hidden">
                 <div class="ledger-toolbar">
-                    <h3 style="font-size: 1.6em;">Transcript Editor</h3>
+                    <h3 style="font-size: 1.4em;">Transcript Editor</h3>
                     <button class="btn btn-primary" onclick="KeptorApp.promptYear()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        Append Academic Year
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Append Year
                     </button>
                 </div>
                 <div id="ledger-container"></div>
             </section>
-
+            
+            <p class="brand-footer">powered by brenduling</p>
         </main>
+
+        <nav class="bottom-nav">
+            <button class="nav-item active" onclick="KeptorUI.switchNav('dashboard', this)" title="Overview">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                <span>Overview</span>
+            </button>
+            <button class="nav-item" onclick="KeptorUI.switchNav('ledger', this)" title="Ledger">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                <span>Ledger</span>
+            </button>
+            <button class="nav-item" onclick="KeptorUI.toggleTheme()" title="Theme">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <span>Theme</span>
+            </button>
+            <button class="nav-item" onclick="KeptorAuth.confirmLogout()" title="Sign Out">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                <span>Sign Out</span>
+            </button>
+        </nav>
     </div>
 
     <div id="custom-alert" class="custom-dialog-overlay">
@@ -392,6 +420,18 @@
             <div class="dialog-actions">
                 <button class="btn btn-outline" onclick="Dialog.closePrompt(false)">Cancel</button>
                 <button class="btn btn-primary" onclick="Dialog.closePrompt(true)">Confirm Entry</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="custom-confirm" class="custom-dialog-overlay">
+        <div class="custom-dialog-box text-center">
+            <svg style="width:55px; height:55px; color:var(--danger); margin-bottom:20px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <h3 class="dialog-title" id="confirm-title">Confirm Action</h3>
+            <p id="confirm-msg" style="color:var(--text-muted); margin-bottom:25px;">Are you sure?</p>
+            <div class="dialog-actions" style="justify-content: center;">
+                <button class="btn btn-outline" onclick="Dialog.closeConfirm(false)">Cancel</button>
+                <button class="btn btn-danger" onclick="Dialog.closeConfirm(true)">Sign Out</button>
             </div>
         </div>
     </div>
@@ -473,6 +513,7 @@
 
         const Dialog = {
             promptCallback: null,
+            confirmCallback: null,
             showAlert: (msg) => { document.getElementById('alert-msg').innerText = msg; document.getElementById('custom-alert').classList.add('active'); },
             closeAlert: () => document.getElementById('custom-alert').classList.remove('active'),
             showPrompt: (title, desc, placeholder, callback) => {
@@ -485,6 +526,17 @@
                 document.getElementById('custom-prompt').classList.remove('active');
                 if(isConfirm && Dialog.promptCallback) Dialog.promptCallback(document.getElementById('prompt-input').value.trim());
                 Dialog.promptCallback = null;
+            },
+            showConfirm: (title, msg, callback) => {
+                document.getElementById('confirm-title').innerText = title;
+                document.getElementById('confirm-msg').innerText = msg;
+                Dialog.confirmCallback = callback;
+                document.getElementById('custom-confirm').classList.add('active');
+            },
+            closeConfirm: (isConfirm) => {
+                document.getElementById('custom-confirm').classList.remove('active');
+                if(isConfirm && Dialog.confirmCallback) Dialog.confirmCallback();
+                Dialog.confirmCallback = null;
             }
         };
 
@@ -515,6 +567,11 @@
                 if(DB[id] && DB[id].password === pass) { activeUser = DB[id]; Dialog.closeAlert(); KeptorUI.initApp(); }
                 else Dialog.showAlert("Invalid ID or Password.");
             },
+            confirmLogout: () => {
+                Dialog.showConfirm("Sign Out", "Are you sure you want to securely sign out of your account?", () => {
+                    KeptorAuth.logout();
+                });
+            },
             logout: () => {
                 activeUser = null; document.getElementById('app-layout').classList.add('hidden');
                 document.getElementById('auth-portal').classList.remove('hidden');
@@ -536,7 +593,10 @@
                 else document.body.classList.remove('dark-theme');
                 
                 document.getElementById('auth-portal').classList.add('hidden'); document.getElementById('app-layout').classList.remove('hidden');
-                document.getElementById('display-name').innerText = activeUser.name; document.getElementById('display-info').innerText = `${activeUser.id} | ${activeUser.program}`;
+                document.getElementById('display-name').innerText = activeUser.name; 
+                document.getElementById('display-info').innerText = `${activeUser.id} | ${activeUser.program}`;
+                document.getElementById('display-admission').innerText = activeUser.admission || 'N/A';
+                
                 if(activeUser.pic) document.getElementById('display-pic').src = activeUser.pic;
                 
                 KeptorApp.checkIrregularStatus();
@@ -587,7 +647,6 @@
                 const num = parseFloat(v); return !isNaN(num) && num >= 1.0 && num <= 5.0;
             },
             
-            // Checks all grades. If 5.0, INC, or NC is found, status becomes Irregular.
             checkIrregularStatus: () => {
                 let isIrregular = false;
                 activeUser.years.forEach(y => y.semesters.forEach(s => s.courses.forEach(c => {
@@ -598,7 +657,7 @@
                 if (isIrregular) activeUser.status = "Irregular";
                 
                 const statusEl = document.getElementById('display-status');
-                statusEl.innerText = activeUser.status;
+                statusEl.innerText = activeUser.status || 'Regular';
                 statusEl.className = isIrregular ? 'status-irregular' : '';
             },
 
@@ -667,7 +726,7 @@
                                 <span>${sem.name}</span>
                                 <div style="display:flex; align-items:center; gap:15px;">
                                     <span class="grade-pill">Term GWA: ${semStats.gwa}</span>
-                                    <button class="btn btn-outline" style="padding: 6px 12px; font-size:0.75em;" onclick="event.preventDefault(); KeptorApp.openCourseModal(${yIdx}, ${sIdx}, -1)">+ Encode</button>
+                                    <button class="btn btn-outline" style="padding: 6px 12px; font-size:0.75em;" onclick="event.preventDefault(); KeptorApp.openCourseModal(${yIdx}, sIdx, -1)">+ Encode</button>
                                 </div>
                             </summary>
                             <div class="term-content">
@@ -675,6 +734,7 @@
                                     <thead><tr><th>Code</th><th>Course Title</th><th>Units</th><th>Grade</th><th>Action</th></tr></thead>
                                     <tbody>
                                         ${sem.courses.map((c, cIdx) => `<tr><td class="course-code">${c.code}</td><td>${c.title}</td><td>${c.units}</td><td><span class="grade-pill" style="color:var(--brand-primary); border-color:var(--brand-primary);">${c.grade}</span></td><td><button class="btn-text" onclick="KeptorApp.openCourseModal(${yIdx}, ${sIdx}, ${cIdx})">Modify</button></td></tr>`).join('')}
+                                        ${sem.courses.length === 0 ? '<tr><td colspan="5" class="text-center" style="color:var(--text-muted); padding:15px;">No transcript data encoded.</td></tr>' : ''}
                                     </tbody>
                                 </table>
                             </div>
@@ -684,13 +744,15 @@
                     container.innerHTML += `
                     <details class="academic-year" open>
                         <summary>
-                            <div><svg style="width:20px; height:20px; vertical-align:middle; margin-right:10px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>${year.yearName}</div>
-                            <div style="display:flex; align-items:center; gap:15px;">
-                                <span style="font-size:0.85em; font-weight:normal; color:var(--text-muted);">Yearly GWA: <strong style="color:var(--brand-primary); font-size:1.25em;">${yearUnits===0?"0.00":(yearPoints/yearUnits).toFixed(2)}</strong></span>
-                                <button class="btn btn-primary" style="padding: 8px 14px; font-size: 0.75em;" onclick="event.preventDefault(); KeptorApp.promptSemester(${yIdx})">+ Add Term</button>
+                            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                                <div><svg style="width:20px; height:20px; vertical-align:middle; margin-right:10px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>${year.yearName}</div>
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <span style="font-size:0.85em; font-weight:normal; color:var(--text-muted);">Year GWA: <strong style="color:var(--brand-primary); font-size:1.15em;">${yearUnits===0?"0.00":(yearPoints/yearUnits).toFixed(2)}</strong></span>
+                                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.7em;" onclick="event.preventDefault(); KeptorApp.promptSemester(${yIdx})">+ Term</button>
+                                </div>
                             </div>
                         </summary>
-                        <div class="year-content">${semestersHTML || '<p class="text-center text-muted" style="padding: 20px;">No terms added.</p>'}</div>
+                        <div class="year-content">${semestersHTML || '<p class="text-center text-muted" style="padding: 10px;">No terms added.</p>'}</div>
                     </details>`;
                 });
 
