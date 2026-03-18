@@ -128,7 +128,18 @@
         .view-section { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); flex-grow: 1;}
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Intuitively Scaled Profile Header */
+        /* Ledger Security Blur */
+        .ledger-wrapper { transition: filter 0.3s ease; position: relative; }
+        .ledger-wrapper.locked { filter: blur(8px); pointer-events: none; user-select: none; }
+        
+        .security-gate {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: var(--bg-surface); padding: 30px; border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md); z-index: 10; width: 90%; max-width: 400px; text-align: center;
+            border: 1px solid var(--border-light);
+        }
+
+        /* Profile Header */
         .profile-header {
             background: var(--bg-surface); border-radius: var(--radius-lg); padding: 25px;
             display: flex; align-items: center; gap: 20px; box-shadow: var(--shadow-sm);
@@ -160,10 +171,25 @@
         details > summary:hover { background: var(--hover-bg); }
         .year-content, .term-content { padding: 15px 20px; border-top: 1px solid var(--border-light); overflow-x: auto; }
 
+        /* Term Header Action */
+        .term-summary-text { cursor: pointer; transition: color 0.2s; }
+        .term-summary-text:hover { color: var(--brand-accent); }
+
+        /* Summary Group Details */
+        details.summary-term-group {
+            background: var(--bg-surface); border: 1px solid var(--border-light);
+            border-radius: var(--radius-md); margin-bottom: 12px; overflow: hidden;
+        }
+        details.summary-term-group > summary {
+            padding: 12px 18px; font-size: 0.9em; color: var(--brand-primary);
+            background: var(--hover-bg); border-radius: 0; font-family: var(--font-body); text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        details.summary-term-group .term-content { padding: 0; overflow-x: auto; border-top: none; }
+
         /* Tables */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9em; min-width: 600px; }
-        th { text-align: left; padding: 12px; border-bottom: 2px solid var(--brand-primary); color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-size: 0.75em; font-weight: 700; }
-        td { padding: 12px; border-bottom: 1px solid var(--border-light); word-break: break-word; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid var(--brand-primary); color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-size: 0.75em; font-weight: 700; background: var(--bg-surface);}
+        td { padding: 12px; border-bottom: 1px solid var(--border-light); word-break: break-word; background: var(--bg-surface);}
         tr:last-child td { border-bottom: none; }
         .course-code { font-family: monospace; font-weight: 700; color: var(--brand-accent); font-size: 1.1em; }
         .grade-pill { background: var(--bg-body); border: 1px solid var(--border-light); padding: 4px 8px; border-radius: var(--radius-md); font-weight: 700; display: inline-block; font-size: 0.9em;}
@@ -206,6 +232,20 @@
         .dialog-title { font-family: var(--font-heading); margin-bottom: 10px; font-size: 1.4em; color: var(--brand-primary); }
         .dialog-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px; }
 
+        /* Context Menu */
+        #context-menu {
+            position: fixed; background: var(--bg-surface); border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-md); border-radius: var(--radius-md); z-index: 10000;
+            padding: 5px 0; min-width: 150px; display: none;
+        }
+        #context-menu.active { display: block; }
+        .context-item {
+            padding: 10px 15px; cursor: pointer; font-size: 0.9em; font-weight: 500;
+            transition: background 0.2s;
+        }
+        .context-item:hover { background: var(--hover-bg); color: var(--brand-primary); }
+        .context-item.danger:hover { background: #fee2e2; color: var(--danger); }
+
         /* AGGRESSIVE MOBILE SCALING FOR ANTI-SCROLL */
         @media (max-width: 768px) {
             .main-content { padding: 15px 10px 85px 10px; }
@@ -226,6 +266,7 @@
             
             details.academic-year > summary { padding: 12px 15px; font-size: 0.95em; flex-wrap: wrap; gap: 8px; }
             details.academic-year > summary > div { width: 100%; justify-content: space-between; }
+            details.academic-term > summary { padding: 10px 12px; font-size: 0.9em; }
             
             .year-content, .term-content { padding: 10px; }
             
@@ -339,7 +380,7 @@
                         <h3 style="font-size: 1.2em;">Comprehensive Record</h3>
                         <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; width: 100%;">
                             <div class="input-group" style="margin:0; flex: 1; min-width: 150px;">
-                                <input type="text" id="summary-search" placeholder="Search course code or title..." onkeyup="KeptorApp.renderSummary()">
+                                <input type="text" id="summary-search" placeholder="Search code or title..." onkeyup="KeptorApp.renderSummary()">
                             </div>
                             <div class="input-group" style="margin:0; min-width:180px;">
                                 <select id="summary-sort" onchange="KeptorApp.renderSummary()">
@@ -353,27 +394,33 @@
                         </div>
                     </div>
                     <p style="color: var(--text-muted); margin-bottom: 15px; font-size:0.85em;">(1.0 = Highest, 5.0 = Lowest. Grades of INC, NC, or 5.0 trigger an Irregular status and are excluded from GWA).</p>
-                    <div style="overflow-x:auto; border: 1px solid var(--border-light); border-radius: var(--radius-md);">
-                        <table style="margin-top:0;">
-                            <thead style="background:var(--hover-bg);">
-                                <tr><th>Code</th><th>Course Title</th><th>Term</th><th>Units</th><th>Grade</th></tr>
-                            </thead>
-                            <tbody id="summary-table-body">
-                                </tbody>
-                        </table>
-                    </div>
+                    
+                    <div id="summary-content-area">
+                        </div>
                 </div>
             </section>
 
             <section id="nav-ledger" class="view-section hidden">
-                <div class="ledger-toolbar">
-                    <h3 style="font-size: 1.4em;">Transcript Editor</h3>
-                    <button class="btn btn-primary" onclick="KeptorApp.promptYear()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        Append Year
-                    </button>
+                <div id="ledger-security-gate" class="security-gate">
+                    <h3 style="margin-bottom: 10px;">Security Verification</h3>
+                    <p style="font-size: 0.85em; color: var(--text-muted); margin-bottom: 20px;">Please re-enter your Security Key to access the Transcript Editor.</p>
+                    <div class="input-group">
+                        <input type="password" id="ledger-auth-pass" placeholder="Enter password">
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="KeptorAuth.verifyLedgerAccess()">Verify & Unlock</button>
                 </div>
-                <div id="ledger-container"></div>
+
+                <div id="protected-ledger" class="ledger-wrapper locked">
+                    <div class="ledger-toolbar">
+                        <h3 style="font-size: 1.4em;">Transcript Editor</h3>
+                        <button class="btn btn-primary" onclick="KeptorApp.promptYear()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            Append Year
+                        </button>
+                    </div>
+                    <p style="font-size: 0.85em; color: var(--text-muted); margin-bottom: 15px;"><em>Tip: Long press (or right-click) on an Academic Term name to rename or delete it.</em></p>
+                    <div id="ledger-container"></div>
+                </div>
             </section>
             
             <p class="brand-footer" style="margin-top: auto; padding-top: 35px;">powered by brenduling</p>
@@ -397,6 +444,11 @@
                 <span>Sign Out</span>
             </button>
         </nav>
+    </div>
+
+    <div id="context-menu">
+        <div class="context-item" id="ctx-edit">Rename Term</div>
+        <div class="context-item danger" id="ctx-delete">Delete Term</div>
     </div>
 
     <div id="custom-alert" class="custom-dialog-overlay">
@@ -429,7 +481,7 @@
             <p id="confirm-msg" style="color:var(--text-muted); margin-bottom:25px;">Are you sure?</p>
             <div class="dialog-actions" style="justify-content: center;">
                 <button class="btn btn-outline" onclick="Dialog.closeConfirm(false)">Cancel</button>
-                <button class="btn btn-danger" onclick="Dialog.closeConfirm(true)">Sign Out</button>
+                <button class="btn btn-danger" onclick="Dialog.closeConfirm(true)">Proceed</button>
             </div>
         </div>
     </div>
@@ -493,6 +545,7 @@
 
         let DB = {};
         let activeUser = null;
+        let isLedgerUnlocked = false;
 
         const CloudDB = {
             fetch: async () => {
@@ -555,7 +608,6 @@
                 DB[id] = { name, id, password: pass, program: prog, admission: year, status, pic: "", years: [] };
                 await CloudDB.save(DB);
                 
-                // Auto-login after registration
                 Dialog.showAlert("Registration successful! Logging you in...");
                 activeUser = DB[id];
                 localStorage.setItem('keptor_session', id);
@@ -574,6 +626,17 @@
                 }
                 else Dialog.showAlert("Invalid ID or Password.");
             },
+            verifyLedgerAccess: () => {
+                const pass = document.getElementById('ledger-auth-pass').value;
+                if (pass === activeUser.password) {
+                    isLedgerUnlocked = true;
+                    document.getElementById('ledger-security-gate').classList.add('hidden');
+                    document.getElementById('protected-ledger').classList.remove('locked');
+                } else {
+                    Dialog.showAlert("Incorrect Security Key.");
+                }
+                document.getElementById('ledger-auth-pass').value = '';
+            },
             confirmLogout: () => {
                 Dialog.showConfirm("Sign Out", "Are you sure you want to securely sign out of your account?", () => {
                     KeptorAuth.logout();
@@ -581,10 +644,15 @@
             },
             logout: () => {
                 activeUser = null; 
+                isLedgerUnlocked = false;
                 localStorage.removeItem('keptor_session');
                 document.getElementById('app-layout').classList.add('hidden');
                 document.getElementById('auth-portal').classList.remove('hidden');
                 document.getElementById('login-id').value = ''; document.getElementById('login-pass').value = '';
+                
+                // Reset Ledger Security UI
+                document.getElementById('ledger-security-gate').classList.remove('hidden');
+                document.getElementById('protected-ledger').classList.add('locked');
             }
         };
 
@@ -612,6 +680,46 @@
                 KeptorApp.renderLedger(); KeptorApp.renderSummary();
             }
         };
+
+        // --- Context Menu Logic for Terms ---
+        let contextTermData = null; // Stores {yIdx, sIdx}
+        let pressTimer;
+
+        const ContextMenu = {
+            init: () => {
+                document.addEventListener('click', () => { document.getElementById('context-menu').classList.remove('active'); });
+                
+                document.getElementById('ctx-edit').addEventListener('click', () => {
+                    if(!contextTermData) return;
+                    const { yIdx, sIdx } = contextTermData;
+                    Dialog.showPrompt("Rename Term", "Enter the new name for this term.", activeUser.years[yIdx].semesters[sIdx].name, (val) => {
+                        if(val) {
+                            activeUser.years[yIdx].semesters[sIdx].name = val;
+                            KeptorApp.saveState(); KeptorApp.renderLedger(); KeptorApp.renderSummary();
+                        }
+                    });
+                });
+
+                document.getElementById('ctx-delete').addEventListener('click', () => {
+                    if(!contextTermData) return;
+                    const { yIdx, sIdx } = contextTermData;
+                    Dialog.showConfirm("Delete Term", "This will permanently erase the term and all enclosed courses. Proceed?", () => {
+                        activeUser.years[yIdx].semesters.splice(sIdx, 1);
+                        KeptorApp.saveState(); KeptorApp.renderLedger(); KeptorApp.renderSummary();
+                    });
+                });
+            },
+            show: (e, yIdx, sIdx) => {
+                e.preventDefault();
+                contextTermData = { yIdx, sIdx };
+                const menu = document.getElementById('context-menu');
+                menu.style.top = `${e.clientY}px`;
+                menu.style.left = `${e.clientX}px`;
+                menu.classList.add('active');
+            }
+        };
+        ContextMenu.init();
+
 
         const KeptorApp = {
             saveState: () => { DB[activeUser.id] = activeUser; CloudDB.save(DB); },
@@ -716,7 +824,14 @@
             },
 
             renderLedger: () => {
-                const container = document.getElementById('ledger-container'); container.innerHTML = "";
+                const container = document.getElementById('ledger-container'); 
+                
+                // Snapshot current open/close states
+                const openStates = { years: {}, terms: {} };
+                container.querySelectorAll('details.academic-year').forEach(el => { openStates.years[el.dataset.yidx] = el.hasAttribute('open'); });
+                container.querySelectorAll('details.academic-term').forEach(el => { openStates.terms[el.dataset.tidx] = el.hasAttribute('open'); });
+
+                container.innerHTML = "";
                 let globalUnits = 0, globalPoints = 0;
 
                 if(activeUser.years.length === 0) container.innerHTML = `<div class="institutional-card text-center" style="max-width:100%; box-shadow:none; border:1px dashed var(--border-light);"><p style="color:var(--text-muted);">The ledger is currently empty.</p></div>`;
@@ -728,10 +843,19 @@
                         yearUnits += semStats.units; yearPoints += semStats.points;
                         globalUnits += semStats.units; globalPoints += semStats.points;
 
+                        const tIdxStr = `${yIdx}-${sIdx}`;
+                        const isTermOpen = openStates.terms[tIdxStr] !== undefined ? openStates.terms[tIdxStr] : true;
+
+                        // Binding Touch/Click Events to Context Menu
                         semestersHTML += `
-                        <details class="academic-term" open>
+                        <details class="academic-term" data-tidx="${tIdxStr}" ${isTermOpen ? 'open' : ''}>
                             <summary>
-                                <span>${sem.name}</span>
+                                <span class="term-summary-text" 
+                                    oncontextmenu="ContextMenu.show(event, ${yIdx}, ${sIdx})"
+                                    ontouchstart="pressTimer = window.setTimeout(function() { ContextMenu.show(event, ${yIdx}, ${sIdx}); }, 800);"
+                                    ontouchend="clearTimeout(pressTimer);"
+                                    ontouchmove="clearTimeout(pressTimer);"
+                                >${sem.name}</span>
                                 <div style="display:flex; align-items:center; gap:15px;">
                                     <span class="grade-pill">Term GWA: ${semStats.gwa}</span>
                                     <button class="btn btn-outline" style="padding: 6px 12px; font-size:0.75em;" onclick="event.preventDefault(); KeptorApp.openCourseModal(${yIdx}, ${sIdx}, -1)">+ Encode</button>
@@ -749,8 +873,10 @@
                         </details>`;
                     });
 
+                    const isYearOpen = openStates.years[yIdx] !== undefined ? openStates.years[yIdx] : true;
+
                     container.innerHTML += `
-                    <details class="academic-year" open>
+                    <details class="academic-year" data-yidx="${yIdx}" ${isYearOpen ? 'open' : ''}>
                         <summary>
                             <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                                 <div><svg style="width:20px; height:20px; vertical-align:middle; margin-right:10px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>${year.yearName}</div>
@@ -768,19 +894,48 @@
             },
 
             renderSummary: () => {
-                const tbody = document.getElementById('summary-table-body');
+                const container = document.getElementById('summary-content-area');
                 const sortMode = document.getElementById('summary-sort').value;
                 const searchTerm = document.getElementById('summary-search').value.toLowerCase();
-                let allCourses = [];
                 
-                activeUser.years.forEach(y => y.semesters.forEach(s => s.courses.forEach(c => allCourses.push({...c, termInfo: `${y.yearName} - ${s.name}`}))));
-
-                // Search Filter
-                if(searchTerm) {
-                    allCourses = allCourses.filter(c => c.title.toLowerCase().includes(searchTerm) || c.code.toLowerCase().includes(searchTerm));
+                // If chronological and no active search, build grouped details view
+                if (sortMode === 'default' && !searchTerm) {
+                    let html = '';
+                    activeUser.years.forEach(y => {
+                        y.semesters.forEach(s => {
+                            if (s.courses.length === 0) return;
+                            const semStats = KeptorApp.calculateStats(s.courses);
+                            html += `
+                            <details class="summary-term-group" open>
+                                <summary>
+                                    ${y.yearName} - ${s.name}
+                                    <span class="grade-pill" style="font-size: 0.8em; margin-left: 15px; border-color: transparent;">Term GWA: ${semStats.gwa}</span>
+                                </summary>
+                                <div class="term-content">
+                                    <table>
+                                        <thead><tr><th>Code</th><th>Course Title</th><th>Units</th><th>Grade</th></tr></thead>
+                                        <tbody>
+                                            ${s.courses.map(c => `<tr><td class="course-code">${c.code}</td><td style="font-weight:500;">${c.title}</td><td>${c.units}</td><td><span class="grade-pill" style="color:var(--brand-primary);">${c.grade}</span></td></tr>`).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </details>`;
+                        });
+                    });
+                    
+                    if (!html) html = `<p class="text-center text-muted" style="padding:25px;">No records found.</p>`;
+                    container.innerHTML = html;
+                    container.style.border = 'none';
+                    container.style.background = 'transparent';
+                    return;
                 }
 
-                // Sort Logic
+                // Otherwise, flat table logic
+                let allCourses = [];
+                activeUser.years.forEach(y => y.semesters.forEach(s => s.courses.forEach(c => allCourses.push({...c, termInfo: `${y.yearName} - ${s.name}`}))));
+
+                if(searchTerm) allCourses = allCourses.filter(c => c.title.toLowerCase().includes(searchTerm) || c.code.toLowerCase().includes(searchTerm));
+
                 if(sortMode === 'title-asc') allCourses.sort((a,b) => a.title.localeCompare(b.title));
                 else if(sortMode === 'code-asc') allCourses.sort((a,b) => a.code.localeCompare(b.code));
                 else if(sortMode === 'grade-high' || sortMode === 'grade-low') {
@@ -796,11 +951,11 @@
                 }
 
                 if(allCourses.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="text-center" style="padding:25px; color:var(--text-muted);">No records found.</td></tr>`;
+                    container.innerHTML = `<div style="border: 1.5px solid var(--border-light); border-radius: var(--radius-md); padding: 25px;"><p class="text-center text-muted">No records found.</p></div>`;
                     return;
                 }
 
-                tbody.innerHTML = allCourses.map(c => `
+                const flatRows = allCourses.map(c => `
                     <tr>
                         <td class="course-code">${c.code}</td>
                         <td style="font-weight:500;">${c.title}</td>
@@ -809,6 +964,19 @@
                         <td><span class="grade-pill" style="color:var(--brand-primary);">${c.grade}</span></td>
                     </tr>
                 `).join('');
+
+                container.innerHTML = `
+                <div style="overflow-x:auto;">
+                    <table style="margin-top:0;">
+                        <thead style="background:var(--hover-bg);">
+                            <tr><th>Code</th><th>Course Title</th><th>Term</th><th>Units</th><th>Grade</th></tr>
+                        </thead>
+                        <tbody>${flatRows}</tbody>
+                    </table>
+                </div>`;
+                container.style.border = '1.5px solid var(--border-light)';
+                container.style.borderRadius = 'var(--radius-md)';
+                container.style.background = 'var(--bg-surface)';
             }
         };
 
