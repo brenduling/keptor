@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Keptor | Scholastic Ledger</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Academic Theme Variables - Light Mode (Default) */
+        :root {
+            --bg-body: #f4f5f7;
+            --bg-surface: #ffffff;
+            --bg-sidebar: #0f2c59;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --text-inverse: #f8fafc;
+            --brand-primary: #0f2c59; 
+            --brand-accent: #8b1c31; 
+            --border-light: #e2e8f0;
+            --danger: #dc2626;
+            --hover-bg: #f8fafc;
+            
+            --font-heading: 'Merriweather', serif;
+            --font-body: 'Inter', sans-serif;
+            --radius-md: 8px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 12px 30px rgba(15, 44, 89, 0.08);
+            --select-arrow: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%230f2c59" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"/></svg>');
+        }
+
+        /* Dark Mode Override */
+        body.dark-theme {
+            --bg-body: #0b1120;
+            --bg-surface: #1e293b;
+            --bg-sidebar: #061024;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --brand-primary: #3b82f6; 
+            --brand-accent: #f43f5e; 
+            --border-light: #334155;
+            --hover-bg: #0f172a;
+            --shadow-sm: 0 4px 6px rgba(0,0,0,0.3);
+            --shadow-md: 0 15px 35px rgba(0,0,0,0.6);
+            --select-arrow: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%2394a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"/></svg>');
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background-color: var(--bg-body); color: var(--text-main);
+            font-family: var(--font-body); line-height: 1.6;
+            user-select: none; -webkit-user-select: none;
+            overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--brand-primary); }
+        .hidden { display: none !important; }
+        .text-accent { color: var(--brand-accent); }
+        .text-center { text-align: center; }
+        .divider { height: 1px; background: var(--border-light); margin: 24px 0; border: none; }
+
+        /* Buttons & Inputs */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 20px; border: none; border-radius: var(--radius-md);
+            font-family: var(--font-body); font-weight: 600; font-size: 0.9em;
+            cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .btn-primary { background: var(--brand-primary); color: #fff; box-shadow: 0 4px 10px rgba(15, 44, 89, 0.2); }
+        .btn-primary:hover { filter: brightness(1.15); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(15, 44, 89, 0.3); }
+        .btn-accent { background: var(--brand-accent); color: #fff; box-shadow: 0 4px 10px rgba(139, 28, 49, 0.2); }
+        .btn-accent:hover { filter: brightness(1.15); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(139, 28, 49, 0.3); }
+        .btn-outline { background: transparent; border: 1.5px solid var(--border-light); color: var(--text-main); }
+        .btn-outline:hover { background: var(--hover-bg); border-color: var(--brand-primary); color: var(--brand-primary); }
+        .btn-text { background: none; border: none; color: var(--brand-primary); font-weight: 700; cursor: pointer; text-decoration: none; font-family: var(--font-body); padding: 0; border-bottom: 2px solid transparent; transition: border-color 0.2s;}
+        .btn-text:hover { border-color: var(--brand-primary); }
+
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 8px; font-size: 0.8em; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .input-group input, .input-group select {
+            width: 100%; padding: 14px 16px; border: 1.5px solid var(--border-light);
+            border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text-main);
+            font-family: var(--font-body); font-size: 1em; transition: all 0.3s;
+        }
+        .input-group input:focus, .input-group select:focus { outline: none; border-color: var(--brand-primary); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15); }
+        
+        select {
+            appearance: none; -webkit-appearance: none; -moz-appearance: none;
+            background-image: var(--select-arrow);
+            background-repeat: no-repeat; background-position: right 16px center;
+            background-size: 16px; padding-right: 45px !important; cursor: pointer;
+        }
+
+        /* Auth Portal */
+        #auth-portal { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .institutional-card {
+            background: var(--bg-surface); width: 100%; max-width: 520px;
+            padding: 45px; border-radius: var(--radius-lg); box-shadow: var(--shadow-md);
+            border-top: 6px solid var(--brand-primary); margin: 0 auto;
+        }
+        
+        .academic-crest { width: 75px; height: 75px; margin: 0 auto 15px auto; display: block; }
+        .academic-crest path { fill: none; stroke: var(--brand-primary); stroke-width: 4; stroke-linejoin: round; }
+        .academic-crest polygon { fill: var(--brand-accent); opacity: 0.9; }
+        
+        .app-title { font-size: 2em; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
+        .app-subtitle { font-family: var(--font-heading); font-style: italic; color: var(--text-muted); margin-bottom: 35px; }
+
+        /* Dashboard Layout */
+        #app-layout { display: flex; min-height: 100vh; }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px; background: var(--bg-sidebar); color: var(--text-inverse);
+            display: flex; flex-direction: column; padding: 35px 0; flex-shrink: 0;
+            transition: width 0.3s ease; z-index: 100;
+        }
+        .sidebar-header { padding: 0 25px 30px 25px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .sidebar-header h2 { color: white; font-size: 1.5em; letter-spacing: 1.5px; transition: opacity 0.3s; }
+        .sidebar-header svg { width: 32px; height: 32px; stroke: white; flex-shrink: 0; }
+        
+        .nav-menu { display: flex; flex-direction: column; gap: 8px; padding: 0 20px; flex-grow: 1; }
+        .nav-item {
+            padding: 14px 20px; color: rgba(255,255,255,0.7); cursor: pointer;
+            border-radius: var(--radius-md); font-weight: 500; transition: all 0.2s;
+            display: flex; align-items: center; gap: 16px; overflow: hidden; white-space: nowrap;
+        }
+        .nav-item svg { flex-shrink: 0; }
+        .nav-item:hover { background: rgba(255,255,255,0.08); color: white; }
+        .nav-item.active { background: var(--brand-accent); color: white; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .nav-text { transition: opacity 0.3s; }
+        
+        .sidebar-footer { padding: 25px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 12px; }
+
+        /* Main Content */
+        .main-content { flex-grow: 1; padding: 45px; overflow-y: auto; background: var(--bg-body); position: relative; }
+        .view-section { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Profile Header */
+        .profile-header {
+            background: var(--bg-surface); border-radius: var(--radius-lg); padding: 35px;
+            display: flex; align-items: center; gap: 35px; box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light); margin-bottom: 35px; flex-wrap: wrap;
+        }
+        .avatar-wrapper { position: relative; width: 110px; height: 110px; border-radius: 12px; overflow: hidden; border: 3px solid var(--bg-body); background: var(--border-light); flex-shrink: 0; box-shadow: var(--shadow-sm);}
+        .avatar-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .profile-text h2 { font-size: 2em; margin-bottom: 6px; }
+        .profile-text p { font-size: 0.9em; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; line-height: 1.8;}
+        .gwa-highlight { margin-left: auto; text-align: right; border-left: 2px solid var(--border-light); padding-left: 35px; }
+        .gwa-highlight label { font-size: 0.85em; color: var(--text-muted); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+        .gwa-highlight .val { font-family: var(--font-heading); font-size: 3.5em; color: var(--brand-primary); line-height: 1; margin-top: 5px;}
+
+        /* Accordions */
+        .ledger-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;}
+        
+        details.academic-year, details.academic-term {
+            background: var(--bg-surface); border: 1px solid var(--border-light);
+            border-radius: var(--radius-md); margin-bottom: 16px; box-shadow: var(--shadow-sm);
+        }
+        details > summary {
+            padding: 20px 25px; font-weight: bold; cursor: pointer; display: flex; 
+            justify-content: space-between; align-items: center; list-style: none;
+            background: var(--bg-surface); border-radius: var(--radius-md); transition: background 0.2s;
+        }
+        details.academic-year > summary { font-family: var(--font-heading); font-size: 1.25em; color: var(--brand-primary); }
+        details > summary::-webkit-details-marker { display: none; }
+        details > summary:hover { background: var(--hover-bg); }
+        .year-content, .term-content { padding: 20px 25px; border-top: 1px solid var(--border-light); overflow-x: auto; }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.95em; min-width: 650px; }
+        th { text-align: left; padding: 14px; border-bottom: 2px solid var(--brand-primary); color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-size: 0.8em; font-weight: 700; }
+        td { padding: 14px; border-bottom: 1px solid var(--border-light); }
+        tr:last-child td { border-bottom: none; }
+        .course-code { font-family: monospace; font-weight: 700; color: var(--brand-accent); font-size: 1.15em; }
+        .grade-pill { background: var(--bg-body); border: 1px solid var(--border-light); padding: 5px 10px; border-radius: var(--radius-md); font-weight: 700; display: inline-block;}
+        .status-irregular { color: var(--danger); font-weight: bold; }
+
+        /* Custom Modals */
+        .custom-dialog-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            display: flex; align-items: center; justify-content: center; z-index: 9999;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .custom-dialog-overlay.active { opacity: 1; pointer-events: all; }
+        .custom-dialog-box {
+            background: var(--bg-surface); padding: 35px; border-radius: var(--radius-lg);
+            width: 90%; max-width: 480px; box-shadow: var(--shadow-md);
+            transform: translateY(30px) scale(0.95); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-light);
+        }
+        .custom-dialog-overlay.active .custom-dialog-box { transform: translateY(0) scale(1); }
+        .dialog-title { font-family: var(--font-heading); margin-bottom: 10px; font-size: 1.4em; color: var(--brand-primary); }
+        .dialog-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { width: 80px; align-items: center; padding: 25px 0; }
+            .sidebar-header h2, .nav-text { display: none; }
+            .sidebar-header { padding: 0 0 25px 0; }
+            .nav-item { padding: 14px; justify-content: center; }
+            .sidebar-footer .btn span { display: none; }
+            .sidebar-footer .btn { padding: 14px; }
+            .main-content { padding: 25px 15px; }
+            .profile-header { flex-direction: column; text-align: center; }
+            .gwa-highlight { margin-left: 0; text-align: center; border-left: none; border-top: 1px solid var(--border-light); padding-left: 0; padding-top: 20px; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="auth-portal">
+        <div class="institutional-card text-center">
+            <svg class="academic-crest" viewBox="0 0 100 100">
+                <polygon points="50,10 90,30 50,50 10,30" />
+                <path d="M10 30 L10 70 L50 90 L90 70 L90 30 M50 50 L50 90" />
+                <circle cx="50" cy="50" r="6" fill="var(--bg-surface)" stroke="none"/>
+            </svg>
+            <h1 class="app-title">Keptor</h1>
+            <p class="app-subtitle">Scholastic Cloud System</p>
+
+            <div id="view-login">
+                <div class="input-group">
+                    <label>Institutional ID</label>
+                    <input type="text" id="login-id" placeholder="Enter your ID">
+                </div>
+                <div class="input-group">
+                    <label>Security Key (Password)</label>
+                    <input type="password" id="login-pass" placeholder="Enter your password">
+                </div>
+                <button class="btn btn-primary" style="width: 100%; padding: 15px;" onclick="KeptorAuth.login()">Authenticate & Retrieve</button>
+                <div class="divider"></div>
+                <p style="font-size: 0.9em; color: var(--text-muted);">Unregistered student? <button class="btn-text" onclick="KeptorAuth.switchView('register')">Establish New Profile</button></p>
+            </div>
+
+            <div id="view-register" class="hidden text-left">
+                <div class="input-group">
+                    <label>Full Legal Name</label>
+                    <input type="text" id="reg-name" placeholder="Last Name, First Name">
+                </div>
+                <div class="input-group">
+                    <label>Institutional ID (Username)</label>
+                    <input type="text" id="reg-id" placeholder="e.g. 2024-0001">
+                </div>
+                <div class="input-group">
+                    <label>Security Key (Password)</label>
+                    <input type="password" id="reg-pass" placeholder="Create a strong password">
+                </div>
+                <div class="input-group">
+                    <label>Degree / Major</label>
+                    <input type="text" id="reg-program" placeholder="e.g. BS Information Technology">
+                </div>
+                <div style="display:flex; gap:15px;">
+                    <div class="input-group" style="flex:1;">
+                        <label>Admission Year</label>
+                        <input type="number" id="reg-year" placeholder="e.g. 2024">
+                    </div>
+                    <div class="input-group" style="flex:1;">
+                        <label>Status</label>
+                        <select id="reg-status">
+                            <option value="Regular">Regular</option>
+                            <option value="Irregular">Irregular</option>
+                            <option value="Transferee">Transferee</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-accent" style="width: 100%; padding: 15px;" onclick="KeptorAuth.register()">Formalize Registration</button>
+                <div class="divider"></div>
+                <p class="text-center" style="font-size: 0.9em; color: var(--text-muted);">Existing record? <button class="btn-text" onclick="KeptorAuth.switchView('login')">Return to Authentication</button></p>
+            </div>
+        </div>
+        <p style="margin-top: 35px; font-size: 0.8em; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; font-weight:600;">powered by brenduling</p>
+    </div>
+
+    <div id="app-layout" class="hidden">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <svg viewBox="0 0 100 100" fill="none">
+                    <polygon points="50,10 90,30 50,50 10,30" fill="var(--brand-accent)"/>
+                    <path d="M10 30 L10 70 L50 90 L90 70 L90 30 M50 50 L50 90" stroke-width="6" stroke-linejoin="round"/>
+                </svg>
+                <h2>Keptor</h2>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-item active" onclick="KeptorUI.switchNav('dashboard', this)" title="Scholastic Overview">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    <span class="nav-text">Scholastic Overview</span>
+                </div>
+                <div class="nav-item" onclick="KeptorUI.switchNav('ledger', this)" title="Academic Ledger">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    <span class="nav-text">Academic Ledger</span>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn btn-outline" style="color:var(--text-inverse); border-color: rgba(255,255,255,0.2);" onclick="KeptorUI.toggleTheme()" title="Toggle Theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <span class="nav-text">Toggle Theme</span>
+                </button>
+                <button class="btn btn-outline" style="color:var(--text-inverse); border-color: rgba(255,255,255,0.2);" onclick="KeptorAuth.logout()" title="Sign Out">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    <span class="nav-text">Sign Out</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            
+            <section id="nav-dashboard" class="view-section">
+                <h3 style="margin-bottom: 25px; font-size: 1.6em;">Institutional Profile</h3>
+                
+                <div class="profile-header">
+                    <div class="avatar-wrapper">
+                        <img id="display-pic" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23e2e8f0'/><circle cx='50' cy='35' r='20' fill='%2394a3b8'/><path d='M20 100 Q 50 60 80 100' fill='%2394a3b8'/></svg>">
+                        <input type="file" class="avatar-input" accept="image/*" onchange="KeptorApp.uploadPic(event)">
+                    </div>
+                    <div class="profile-text">
+                        <h2 id="display-name">Student Name</h2>
+                        <p id="display-info">ID | Program</p>
+                        <p id="display-meta" style="color:var(--brand-primary); margin-top:4px;">Admission: 2024 | Status: <span id="display-status">Regular</span></p>
+                    </div>
+                    <div class="gwa-highlight">
+                        <label>Cumulative GWA</label>
+                        <div class="val" id="display-gwa">0.00</div>
+                    </div>
+                </div>
+
+                <div class="institutional-card" style="max-width: 100%; padding:35px;">
+                    <div class="ledger-toolbar">
+                        <h3>Comprehensive Record Summary</h3>
+                        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                            <div class="input-group" style="margin:0; min-width:200px;">
+                                <input type="text" id="summary-search" placeholder="Search course code or title..." onkeyup="KeptorApp.renderSummary()">
+                            </div>
+                            <div class="input-group" style="margin:0; min-width:180px;">
+                                <select id="summary-sort" onchange="KeptorApp.renderSummary()">
+                                    <option value="default">Chronological (Default)</option>
+                                    <option value="title-asc">Course Title (A-Z)</option>
+                                    <option value="code-asc">Course Code (A-Z)</option>
+                                    <option value="grade-high">Grade (Highest: 1.0)</option>
+                                    <option value="grade-low">Grade (Lowest: 5.0)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="color: var(--text-muted); margin-bottom: 25px; font-size:0.9em;">A consolidated, read-only view of all transcribed courses. (1.0 = Highest, 5.0 = Lowest. Grades of INC, NC, or 5.0 trigger an Irregular status and are excluded from GWA).</p>
+                    <div style="overflow-x:auto; border: 1.5px solid var(--border-light); border-radius: var(--radius-md);">
+                        <table style="margin-top:0;">
+                            <thead style="background:var(--hover-bg);">
+                                <tr><th>Code</th><th>Course Title</th><th>Term</th><th>Units</th><th>Grade</th></tr>
+                            </thead>
+                            <tbody id="summary-table-body">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="nav-ledger" class="view-section hidden">
+                <div class="ledger-toolbar">
+                    <h3 style="font-size: 1.6em;">Transcript Editor</h3>
+                    <button class="btn btn-primary" onclick="KeptorApp.promptYear()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Append Academic Year
+                    </button>
+                </div>
+                <div id="ledger-container"></div>
+            </section>
+
+        </main>
+    </div>
+
+    <div id="custom-alert" class="custom-dialog-overlay">
+        <div class="custom-dialog-box text-center">
+            <svg style="width:55px; height:55px; color:var(--brand-primary); margin-bottom:20px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <h3 class="dialog-title">System Notification</h3>
+            <p id="alert-msg" style="color:var(--text-muted); margin-bottom:25px;">Message</p>
+            <button class="btn btn-primary" style="width:100%;" onclick="Dialog.closeAlert()">Acknowledge</button>
+        </div>
+    </div>
+
+    <div id="custom-prompt" class="custom-dialog-overlay">
+        <div class="custom-dialog-box">
+            <h3 class="dialog-title" id="prompt-title">Input Required</h3>
+            <p id="prompt-desc" style="color:var(--text-muted); margin-bottom:15px; font-size:0.9em;">Description</p>
+            <div class="input-group" style="margin-bottom: 0;">
+                <input type="text" id="prompt-input">
+            </div>
+            <div class="dialog-actions">
+                <button class="btn btn-outline" onclick="Dialog.closePrompt(false)">Cancel</button>
+                <button class="btn btn-primary" onclick="Dialog.closePrompt(true)">Confirm Entry</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="course-modal" class="custom-dialog-overlay">
+        <div class="custom-dialog-box">
+            <h3 class="dialog-title" id="modal-title">Transcribe Course</h3>
+            <p style="font-size:0.85em; color:var(--text-muted); margin-bottom:20px;">Valid Grades: 1.0 to 5.0, INC, NC, DRP.</p>
+            <input type="hidden" id="modal-y-idx">
+            <input type="hidden" id="modal-s-idx">
+            <input type="hidden" id="modal-c-idx">
+            
+            <div class="input-group">
+                <label>Course Code</label>
+                <input type="text" id="course-code" placeholder="e.g. ITE314">
+            </div>
+            <div class="input-group">
+                <label>Descriptive Title</label>
+                <input type="text" id="course-title" placeholder="e.g. Information Management">
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <div class="input-group" style="flex: 1;">
+                    <label>Credit Units</label>
+                    <input type="number" id="course-units" step="1" min="1">
+                </div>
+                <div class="input-group" style="flex: 1;">
+                    <label>Final Grade</label>
+                    <input type="text" id="course-grade" placeholder="e.g. 1.25 or INC">
+                </div>
+            </div>
+            <div class="dialog-actions">
+                <button class="btn btn-outline" onclick="KeptorApp.closeCourseModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="KeptorApp.saveCourse()">Commit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function injectPWA() {
+            const svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0f2c59"/><polygon points="50,10 90,30 50,50 10,30" fill="#8b1c31"/><path d="M10 30 L10 70 L50 90 L90 70 L90 30 M50 50 L50 90" stroke="#ffffff" stroke-width="4" fill="none"/></svg>`;
+            const iconBase64 = 'data:image/svg+xml;base64,' + btoa(svgIcon);
+            const manifest = {
+                "name": "Keptor Scholastic",
+                "short_name": "Keptor",
+                "display": "standalone",
+                "start_url": ".",
+                "background_color": "#0f2c59",
+                "theme_color": "#0f2c59",
+                "icons": [{"src": iconBase64, "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable"}]
+            };
+            const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+            document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(manifestBlob)}">`);
+        })();
+
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.onkeydown = e => { if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74))) return false; }
+
+        const JSONBIN_BIN_ID = '69b9f6d0c3097a1dd534f23d';
+        const JSONBIN_API_KEY = '$2a$10$Tro6Ud5UHq2VqKQnp8Kxo.1MFLWorIUvmpahlY7t9jqDPWr0Xg2em';
+        const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+
+        let DB = {};
+        let activeUser = null;
+
+        const CloudDB = {
+            fetch: async () => {
+                try {
+                    const req = await fetch(JSONBIN_URL, { method: 'GET', headers: { 'X-Master-Key': JSONBIN_API_KEY } });
+                    const res = await req.json();
+                    return res.record || {};
+                } catch (e) { console.error(e); return {}; }
+            },
+            save: async (data) => {
+                try {
+                    await fetch(JSONBIN_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_API_KEY }, body: JSON.stringify(data) });
+                } catch (e) { console.error(e); }
+            }
+        };
+
+        const Dialog = {
+            promptCallback: null,
+            showAlert: (msg) => { document.getElementById('alert-msg').innerText = msg; document.getElementById('custom-alert').classList.add('active'); },
+            closeAlert: () => document.getElementById('custom-alert').classList.remove('active'),
+            showPrompt: (title, desc, placeholder, callback) => {
+                document.getElementById('prompt-title').innerText = title; document.getElementById('prompt-desc').innerText = desc;
+                const input = document.getElementById('prompt-input'); input.placeholder = placeholder; input.value = "";
+                Dialog.promptCallback = callback; document.getElementById('custom-prompt').classList.add('active');
+                setTimeout(() => input.focus(), 100);
+            },
+            closePrompt: (isConfirm) => {
+                document.getElementById('custom-prompt').classList.remove('active');
+                if(isConfirm && Dialog.promptCallback) Dialog.promptCallback(document.getElementById('prompt-input').value.trim());
+                Dialog.promptCallback = null;
+            }
+        };
+
+        const KeptorAuth = {
+            switchView: (view) => {
+                document.getElementById('view-login').classList.add('hidden'); document.getElementById('view-register').classList.add('hidden');
+                document.getElementById('view-' + view).classList.remove('hidden');
+            },
+            register: async () => {
+                const name = document.getElementById('reg-name').value.trim(), id = document.getElementById('reg-id').value.trim();
+                const pass = document.getElementById('reg-pass').value, prog = document.getElementById('reg-program').value.trim();
+                const year = document.getElementById('reg-year').value.trim(), status = document.getElementById('reg-status').value;
+
+                if(!name || !id || !prog || !year || !pass) return Dialog.showAlert("All fields are required.");
+                Dialog.showAlert("Connecting to Cloud..."); DB = await CloudDB.fetch();
+                if(DB[id]) return Dialog.showAlert("Record exists.");
+
+                DB[id] = { name, id, password: pass, program: prog, admission: year, status, pic: "", years: [] };
+                await CloudDB.save(DB);
+                Dialog.showAlert("Registration successful. Please login.");
+                KeptorAuth.switchView('login'); document.getElementById('login-id').value = id; document.getElementById('login-pass').value = '';
+            },
+            login: async () => {
+                const id = document.getElementById('login-id').value.trim(), pass = document.getElementById('login-pass').value;
+                if(!id || !pass) return Dialog.showAlert("ID and Password required.");
+                Dialog.showAlert("Retrieving from Cloud..."); DB = await CloudDB.fetch();
+                
+                if(DB[id] && DB[id].password === pass) { activeUser = DB[id]; Dialog.closeAlert(); KeptorUI.initApp(); }
+                else Dialog.showAlert("Invalid ID or Password.");
+            },
+            logout: () => {
+                activeUser = null; document.getElementById('app-layout').classList.add('hidden');
+                document.getElementById('auth-portal').classList.remove('hidden');
+                document.getElementById('login-id').value = ''; document.getElementById('login-pass').value = '';
+            }
+        };
+
+        const KeptorUI = {
+            switchNav: (targetId, element) => {
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); element.classList.add('active');
+                document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden')); document.getElementById('nav-' + targetId).classList.remove('hidden');
+            },
+            toggleTheme: () => {
+                document.body.classList.toggle('dark-theme');
+                localStorage.setItem('keptor_theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
+            },
+            initApp: () => {
+                if(localStorage.getItem('keptor_theme') === 'dark') document.body.classList.add('dark-theme');
+                else document.body.classList.remove('dark-theme');
+                
+                document.getElementById('auth-portal').classList.add('hidden'); document.getElementById('app-layout').classList.remove('hidden');
+                document.getElementById('display-name').innerText = activeUser.name; document.getElementById('display-info').innerText = `${activeUser.id} | ${activeUser.program}`;
+                if(activeUser.pic) document.getElementById('display-pic').src = activeUser.pic;
+                
+                KeptorApp.checkIrregularStatus();
+                KeptorApp.renderLedger(); KeptorApp.renderSummary();
+            }
+        };
+
+        const KeptorApp = {
+            saveState: () => { DB[activeUser.id] = activeUser; CloudDB.save(DB); },
+            uploadPic: async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                Dialog.showAlert("Uploading portrait to Cloudinary... Please wait.");
+
+                // --- CLOUDINARY CONFIGURATION ---
+                const CLOUD_NAME = 'dsdy1e1wl';
+                const UPLOAD_PRESET = 'keptor_preset';
+                const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+                
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', UPLOAD_PRESET);
+
+                try {
+                    const response = await fetch(CLOUDINARY_URL, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.secure_url) {
+                        activeUser.pic = data.secure_url;
+                        document.getElementById('display-pic').src = activeUser.pic;
+                        KeptorApp.saveState();
+                        Dialog.closeAlert();
+                    } else {
+                        Dialog.showAlert("Upload failed. Please verify your Cloudinary settings.");
+                    }
+                } catch (error) {
+                    console.error("Cloudinary upload error:", error);
+                    Dialog.showAlert("Error connecting to the image server.");
+                }
+            },
+            isValidGrade: (val) => {
+                const v = val.toUpperCase(); if (["INC", "NC", "DRP"].includes(v)) return true;
+                const num = parseFloat(v); return !isNaN(num) && num >= 1.0 && num <= 5.0;
+            },
+            
+            // Checks all grades. If 5.0, INC, or NC is found, status becomes Irregular.
+            checkIrregularStatus: () => {
+                let isIrregular = false;
+                activeUser.years.forEach(y => y.semesters.forEach(s => s.courses.forEach(c => {
+                    const g = c.grade.toString().toUpperCase();
+                    if(["5", "5.0", "5.00", "INC", "NC"].includes(g)) isIrregular = true;
+                })));
+                
+                if (isIrregular) activeUser.status = "Irregular";
+                
+                const statusEl = document.getElementById('display-status');
+                statusEl.innerText = activeUser.status;
+                statusEl.className = isIrregular ? 'status-irregular' : '';
+            },
+
+            calculateStats: (courses) => {
+                let units = 0, points = 0;
+                courses.forEach(c => {
+                    const g = c.grade.toString().toUpperCase();
+                    if (!["INC", "NC", "DRP", "5", "5.0", "5.00"].includes(g)) {
+                        const num = parseFloat(g);
+                        if(!isNaN(num)) { units += parseFloat(c.units); points += (parseFloat(c.units) * num); }
+                    }
+                });
+                return { units, points, gwa: units === 0 ? "0.00" : (points / units).toFixed(2) };
+            },
+
+            promptYear: () => Dialog.showPrompt("Append Academic Year", "e.g., First Year", "First Year", (v) => { if(v){ activeUser.years.push({ yearName: v, semesters: [] }); KeptorApp.saveState(); KeptorApp.renderLedger(); KeptorApp.renderSummary(); } }),
+            promptSemester: (yIdx) => Dialog.showPrompt("Append Academic Term", "e.g., 1st Semester", "1st Sem", (v) => { if(v){ activeUser.years[yIdx].semesters.push({ name: v, courses: [] }); KeptorApp.saveState(); KeptorApp.renderLedger(); KeptorApp.renderSummary(); } }),
+            openCourseModal: (yIdx, sIdx, cIdx) => {
+                document.getElementById('modal-y-idx').value = yIdx; document.getElementById('modal-s-idx').value = sIdx; document.getElementById('modal-c-idx').value = cIdx;
+                if(cIdx >= 0) {
+                    let c = activeUser.years[yIdx].semesters[sIdx].courses[cIdx];
+                    document.getElementById('modal-title').innerText = "Modify Course";
+                    document.getElementById('course-code').value = c.code; document.getElementById('course-title').value = c.title;
+                    document.getElementById('course-units').value = c.units; document.getElementById('course-grade').value = c.grade;
+                } else {
+                    document.getElementById('modal-title').innerText = "Transcribe Course";
+                    document.getElementById('course-code').value = ""; document.getElementById('course-title').value = "";
+                    document.getElementById('course-units').value = ""; document.getElementById('course-grade').value = "";
+                }
+                document.getElementById('course-modal').classList.add('active');
+            },
+            closeCourseModal: () => document.getElementById('course-modal').classList.remove('active'),
+            
+            saveCourse: () => {
+                const yIdx = document.getElementById('modal-y-idx').value, sIdx = document.getElementById('modal-s-idx').value, cIdx = document.getElementById('modal-c-idx').value;
+                const code = document.getElementById('course-code').value.trim(), title = document.getElementById('course-title').value.trim();
+                const units = parseFloat(document.getElementById('course-units').value), grade = document.getElementById('course-grade').value.trim().toUpperCase();
+                
+                if(!code || !title || isNaN(units) || !grade) return Dialog.showAlert("All fields required.");
+                if(!KeptorApp.isValidGrade(grade)) return Dialog.showAlert("Invalid grade.");
+
+                const newCourse = { code, title, units, grade };
+                if(cIdx >= 0) activeUser.years[yIdx].semesters[sIdx].courses[cIdx] = newCourse;
+                else activeUser.years[yIdx].semesters[sIdx].courses.push(newCourse);
+
+                KeptorApp.checkIrregularStatus();
+                KeptorApp.saveState(); KeptorApp.closeCourseModal(); KeptorApp.renderLedger(); KeptorApp.renderSummary();
+            },
+
+            renderLedger: () => {
+                const container = document.getElementById('ledger-container'); container.innerHTML = "";
+                let globalUnits = 0, globalPoints = 0;
+
+                if(activeUser.years.length === 0) container.innerHTML = `<div class="institutional-card text-center" style="max-width:100%; box-shadow:none; border:1px dashed var(--border-light);"><p style="color:var(--text-muted);">The ledger is currently empty.</p></div>`;
+
+                activeUser.years.forEach((year, yIdx) => {
+                    let yearUnits = 0, yearPoints = 0; let semestersHTML = "";
+                    year.semesters.forEach((sem, sIdx) => {
+                        const semStats = KeptorApp.calculateStats(sem.courses);
+                        yearUnits += semStats.units; yearPoints += semStats.points;
+                        globalUnits += semStats.units; globalPoints += semStats.points;
+
+                        semestersHTML += `
+                        <details class="academic-term" open>
+                            <summary>
+                                <span>${sem.name}</span>
+                                <div style="display:flex; align-items:center; gap:15px;">
+                                    <span class="grade-pill">Term GWA: ${semStats.gwa}</span>
+                                    <button class="btn btn-outline" style="padding: 6px 12px; font-size:0.75em;" onclick="event.preventDefault(); KeptorApp.openCourseModal(${yIdx}, ${sIdx}, -1)">+ Encode</button>
+                                </div>
+                            </summary>
+                            <div class="term-content">
+                                <table>
+                                    <thead><tr><th>Code</th><th>Course Title</th><th>Units</th><th>Grade</th><th>Action</th></tr></thead>
+                                    <tbody>
+                                        ${sem.courses.map((c, cIdx) => `<tr><td class="course-code">${c.code}</td><td>${c.title}</td><td>${c.units}</td><td><span class="grade-pill" style="color:var(--brand-primary); border-color:var(--brand-primary);">${c.grade}</span></td><td><button class="btn-text" onclick="KeptorApp.openCourseModal(${yIdx}, ${sIdx}, ${cIdx})">Modify</button></td></tr>`).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </details>`;
+                    });
+
+                    container.innerHTML += `
+                    <details class="academic-year" open>
+                        <summary>
+                            <div><svg style="width:20px; height:20px; vertical-align:middle; margin-right:10px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>${year.yearName}</div>
+                            <div style="display:flex; align-items:center; gap:15px;">
+                                <span style="font-size:0.85em; font-weight:normal; color:var(--text-muted);">Yearly GWA: <strong style="color:var(--brand-primary); font-size:1.25em;">${yearUnits===0?"0.00":(yearPoints/yearUnits).toFixed(2)}</strong></span>
+                                <button class="btn btn-primary" style="padding: 8px 14px; font-size: 0.75em;" onclick="event.preventDefault(); KeptorApp.promptSemester(${yIdx})">+ Add Term</button>
+                            </div>
+                        </summary>
+                        <div class="year-content">${semestersHTML || '<p class="text-center text-muted" style="padding: 20px;">No terms added.</p>'}</div>
+                    </details>`;
+                });
+
+                document.getElementById('display-gwa').innerText = globalUnits === 0 ? "0.00" : (globalPoints / globalUnits).toFixed(2);
+            },
+
+            renderSummary: () => {
+                const tbody = document.getElementById('summary-table-body');
+                const sortMode = document.getElementById('summary-sort').value;
+                const searchTerm = document.getElementById('summary-search').value.toLowerCase();
+                let allCourses = [];
+                
+                activeUser.years.forEach(y => y.semesters.forEach(s => s.courses.forEach(c => allCourses.push({...c, termInfo: `${y.yearName} - ${s.name}`}))));
+
+                // Search Filter
+                if(searchTerm) {
+                    allCourses = allCourses.filter(c => c.title.toLowerCase().includes(searchTerm) || c.code.toLowerCase().includes(searchTerm));
+                }
+
+                // Sort Logic
+                if(sortMode === 'title-asc') allCourses.sort((a,b) => a.title.localeCompare(b.title));
+                else if(sortMode === 'code-asc') allCourses.sort((a,b) => a.code.localeCompare(b.code));
+                else if(sortMode === 'grade-high' || sortMode === 'grade-low') {
+                    allCourses.sort((a,b) => {
+                        const getVal = (g) => {
+                            const str = g.toString().toUpperCase();
+                            if(["INC", "NC", "DRP"].includes(str)) return 999; 
+                            return parseFloat(str) || 999;
+                        };
+                        let valA = getVal(a.grade), valB = getVal(b.grade);
+                        return sortMode === 'grade-high' ? valA - valB : valB - valA; 
+                    });
+                }
+
+                if(allCourses.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center" style="padding:25px; color:var(--text-muted);">No records found.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = allCourses.map(c => `
+                    <tr>
+                        <td class="course-code">${c.code}</td>
+                        <td style="font-weight:500;">${c.title}</td>
+                        <td style="font-size:0.85em; color:var(--text-muted); font-weight:600;">${c.termInfo}</td>
+                        <td>${c.units}</td>
+                        <td><span class="grade-pill" style="color:var(--brand-primary);">${c.grade}</span></td>
+                    </tr>
+                `).join('');
+            }
+        };
+    </script>
+</body>
+</html>
