@@ -108,8 +108,6 @@
         
         .app-title { font-size: 2em; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
         .app-subtitle { font-family: var(--font-heading); font-style: italic; color: var(--text-muted); margin-bottom: 35px; }
-        
-        /* Developer Branding explicitly lowercase */
         .brand-footer { margin-top: 35px; font-size: 0.8em; color: var(--text-muted); font-weight:600; text-align: center; letter-spacing: 2px; text-transform: none; }
 
         /* Dashboard Layout */
@@ -378,7 +376,7 @@
                 <div id="ledger-container"></div>
             </section>
             
-            <p class="brand-footer">powered by brenduling</p>
+            <p class="brand-footer" style="margin-top: auto; padding-top: 35px;">powered by brenduling</p>
         </main>
 
         <nav class="bottom-nav">
@@ -556,15 +554,24 @@
 
                 DB[id] = { name, id, password: pass, program: prog, admission: year, status, pic: "", years: [] };
                 await CloudDB.save(DB);
-                Dialog.showAlert("Registration successful. Please login.");
-                KeptorAuth.switchView('login'); document.getElementById('login-id').value = id; document.getElementById('login-pass').value = '';
+                
+                // Auto-login after registration
+                Dialog.showAlert("Registration successful! Logging you in...");
+                activeUser = DB[id];
+                localStorage.setItem('keptor_session', id);
+                setTimeout(() => { Dialog.closeAlert(); KeptorUI.initApp(); }, 1000);
             },
             login: async () => {
                 const id = document.getElementById('login-id').value.trim(), pass = document.getElementById('login-pass').value;
                 if(!id || !pass) return Dialog.showAlert("ID and Password required.");
                 Dialog.showAlert("Retrieving from Cloud..."); DB = await CloudDB.fetch();
                 
-                if(DB[id] && DB[id].password === pass) { activeUser = DB[id]; Dialog.closeAlert(); KeptorUI.initApp(); }
+                if(DB[id] && DB[id].password === pass) { 
+                    activeUser = DB[id]; 
+                    localStorage.setItem('keptor_session', id);
+                    Dialog.closeAlert(); 
+                    KeptorUI.initApp(); 
+                }
                 else Dialog.showAlert("Invalid ID or Password.");
             },
             confirmLogout: () => {
@@ -573,7 +580,9 @@
                 });
             },
             logout: () => {
-                activeUser = null; document.getElementById('app-layout').classList.add('hidden');
+                activeUser = null; 
+                localStorage.removeItem('keptor_session');
+                document.getElementById('app-layout').classList.add('hidden');
                 document.getElementById('auth-portal').classList.remove('hidden');
                 document.getElementById('login-id').value = ''; document.getElementById('login-pass').value = '';
             }
@@ -612,7 +621,6 @@
 
                 Dialog.showAlert("Uploading portrait to Cloudinary... Please wait.");
 
-                // --- CLOUDINARY CONFIGURATION ---
                 const CLOUD_NAME = 'dsdy1e1wl';
                 const UPLOAD_PRESET = 'keptor_preset';
                 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
@@ -726,7 +734,7 @@
                                 <span>${sem.name}</span>
                                 <div style="display:flex; align-items:center; gap:15px;">
                                     <span class="grade-pill">Term GWA: ${semStats.gwa}</span>
-                                    <button class="btn btn-outline" style="padding: 6px 12px; font-size:0.75em;" onclick="event.preventDefault(); KeptorApp.openCourseModal(${yIdx}, sIdx, -1)">+ Encode</button>
+                                    <button class="btn btn-outline" style="padding: 6px 12px; font-size:0.75em;" onclick="event.preventDefault(); KeptorApp.openCourseModal(${yIdx}, ${sIdx}, -1)">+ Encode</button>
                                 </div>
                             </summary>
                             <div class="term-content">
@@ -803,6 +811,24 @@
                 `).join('');
             }
         };
+
+        // Handle auto-login on load
+        window.addEventListener('DOMContentLoaded', async () => {
+            const sessionId = localStorage.getItem('keptor_session');
+            if (sessionId) {
+                Dialog.showAlert("Restoring your session...");
+                DB = await CloudDB.fetch();
+                if (DB[sessionId]) {
+                    activeUser = DB[sessionId];
+                    Dialog.closeAlert();
+                    KeptorUI.initApp();
+                } else {
+                    Dialog.closeAlert();
+                    localStorage.removeItem('keptor_session');
+                    KeptorAuth.switchView('login');
+                }
+            }
+        });
     </script>
 </body>
 </html>
